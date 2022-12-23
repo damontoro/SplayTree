@@ -11,7 +11,8 @@ class Splaytree
 	struct node {
 		T value;
 		node* father;
-		node* right, left;
+		node* right;
+		node *left;
 	};
 
 private:
@@ -79,9 +80,10 @@ private:
 				}
 			}
 		}
+		root = n;
 	}
 
-	void join(SplayTree<T> *n){ //This joins the tree N to this tree
+	void join(Splaytree<T> *n){ //This joins the tree N to this tree
 		if(n.root == nullptr) return;
 		if(this.root == nullptr){
 			this.root = n.root; return;
@@ -109,11 +111,30 @@ private:
 public:
 
 	bool find(T elem){
-		
+		return true;
 	}
 	void insert(T ins){
-		
+		node *aux = root;
+		node *ne;
+		if(!aux) {
+			root = new node{ins, nullptr, nullptr, nullptr};
+			return;
+		}
+		while(aux->left != nullptr || aux->right != nullptr){
+			if(aux->value <= ins && aux->right != nullptr)
+				aux = aux->right;
+			else if(aux->left != nullptr)
+				aux = aux->left;
+			else
+				break;
+		}
+		if(aux->value <= ins)
+			aux->right = ne = new node{ins, aux, nullptr, nullptr};
+		else
+			aux->left = ne = new node{ins, aux, nullptr, nullptr};
+		splay(ne);
 	}
+	
 	void remove(T del){
 
 	}

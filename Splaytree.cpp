@@ -80,13 +80,30 @@ private:
 			}
 		}
 	}
-	
-	void join(node* n){ //This joins the tree N to this tree
-		
+
+	void join(SplayTree<T> *n){ //This joins the tree N to this tree
+		if(n.root == nullptr) return;
+		if(this.root == nullptr){
+			this.root = n.root; return;
+		}
+		node *aux = this.root;
+		while(aux->right != nullptr) aux = aux->right;
+		splay(aux);
+		aux->right = n.root;
+		n.root->father = aux;
 	}
 
-	node* split(node *n){ //This splits the tree at node N and returns the left tree (small one)
-		
+	node *split(node *n){ //This splits the tree given a node
+		splay(n);
+		node *small = n;
+		this.root = n->right;
+		if(this.root)
+			this.root->father = nullptr;
+
+		small->right = nullptr;
+		small->father = nullptr;
+		n = nullptr;
+		return small;
 	}
 
 public:

@@ -6,13 +6,14 @@ una flotación.
 
 La flotación se inicia en un nodo, que llamaremos origen de la flotación, que es:
 	* En buscar, el nodo buscado, o el último nodo visitado, si el nodo buscado no se encuentra en
-	el árbol.
+	el árbol. Para buscar primero se busca el nodo y luego se flota.
 
 	* En insertar, el nodo insertado, o el nodo que ya contenía dicha clave, si no se ha realizado la
-	inserción.
+	inserción. Para insertar primero se inserta el nodo usando una busqueda binaria y luego se flota
 
 	* En borrar, el padre del nodo borrado, o el último nodo visitado, si el nodo a borrar no se
-	encuentra en el árbol
+	encuentra en el árbol. Para borrar se separa el arbol en dos donde la raiz de uno es el nodo a borrar
+	y seguidamente se unen los dos arboles
 
 
 Casos de la flotación:

@@ -83,16 +83,17 @@ private:
 		root = n;
 	}
 
-	void join(Splaytree<T> *n){ //This joins the tree N to this tree
-		if(n.root == nullptr) return;
+/*
+	void join(node *n){ //This joins the tree N to this tree
+		if(n == nullptr) return;
 		if(this.root == nullptr){
-			this.root = n.root; return;
+			this.root = n; return;
 		}
 		node *aux = this.root;
 		while(aux->right != nullptr) aux = aux->right;
 		splay(aux);
-		aux->right = n.root;
-		n.root->father = aux;
+		aux->right = n;
+		n->father = aux;
 	}
 
 	node *split(node *n){ //This splits the tree given a node
@@ -107,12 +108,24 @@ private:
 		n = nullptr;
 		return small;
 	}
+	*/
 
 public:
 
-	bool find(T elem){
-		return true;
+	node *find(T elem){
+		node *aux = root;
+		while(aux->left != nullptr || aux->right != nullptr){
+			if(elem > aux->value && aux->right != nullptr)
+				aux = aux->right;
+			else if(elem < aux->value && aux->left != nullptr)
+				aux = aux->left;
+			else
+				break;
+		}
+		splay(aux);
+		return aux->value == elem ? aux : nullptr;
 	}
+
 	void insert(T ins){
 		node *aux = root;
 		node *ne;
@@ -136,9 +149,50 @@ public:
 	}
 	
 	void remove(T del){
-
+		node *aux = find(del);
+		node *father = aux->father;
+		if(aux == nullptr){
+			splay(aux);
+		}
+		else{
+			if(!aux->left && !aux->right){
+				if(aux->father->left == aux)
+					aux->father->left = nullptr;
+				else
+					aux->father->right = nullptr;
+				delete aux;
+			}
+			else if(aux->left == nullptr){
+				if(aux->father->left == aux)
+					aux->father->left = aux->right;
+				else
+					aux->father->right = aux->right;
+				aux->right->father = aux->father;
+				delete aux;
+			}
+			else if(aux->right == nullptr){
+				if(aux->father->left == aux)
+					aux->father->left = aux->left;
+				else
+					aux->father->right = aux->left;
+				aux->left->father = aux->father;
+				delete aux;
+			}
+			else{
+				node *aux2 = aux->right;
+				while(aux2->left != nullptr) aux2 = aux2->left;
+				aux->value = aux2->value;
+				if(aux2->father->left == aux2)
+					aux2->father->left = aux2->right;
+				else
+					aux2->father->right = aux2->right;
+				if(aux2->right != nullptr)
+					aux2->right->father = aux2->father;
+				delete aux2;
+			}
+			splay(father);
+		}
 	}
-
 
 	Splaytree(/* args */){}
 	~Splaytree(){}

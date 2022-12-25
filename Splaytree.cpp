@@ -16,7 +16,7 @@ class Splaytree
 	};
 
 private:
-	node *root;
+	node *root = nullptr;
 
 	void rotRight(node* n){
 		node* temp = n->left;
@@ -149,51 +149,11 @@ public:
 	}
 	
 	void remove(T del){
-		node *aux = find(del);
-		node *father = aux->father;
-		if(aux == nullptr){
-			splay(aux);
-		}
-		else{
-			if(!aux->left && !aux->right){
-				if(aux->father->left == aux)
-					aux->father->left = nullptr;
-				else
-					aux->father->right = nullptr;
-				delete aux;
-			}
-			else if(aux->left == nullptr){
-				if(aux->father->left == aux)
-					aux->father->left = aux->right;
-				else
-					aux->father->right = aux->right;
-				aux->right->father = aux->father;
-				delete aux;
-			}
-			else if(aux->right == nullptr){
-				if(aux->father->left == aux)
-					aux->father->left = aux->left;
-				else
-					aux->father->right = aux->left;
-				aux->left->father = aux->father;
-				delete aux;
-			}
-			else{
-				node *aux2 = aux->right;
-				while(aux2->left != nullptr) aux2 = aux2->left;
-				aux->value = aux2->value;
-				if(aux2->father->left == aux2)
-					aux2->father->left = aux2->right;
-				else
-					aux2->father->right = aux2->right;
-				if(aux2->right != nullptr)
-					aux2->right->father = aux2->father;
-				delete aux2;
-			}
-			splay(father);
-		}
+		
 	}
 
-	Splaytree(/* args */){}
+	Splaytree(){
+		root = nullptr;
+	}
 	~Splaytree(){}
 };

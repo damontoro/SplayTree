@@ -53,7 +53,7 @@ private:
 	}
 
 	void splay(node* n){
-		while(n->father != nullptr){
+		while(n && n->father != nullptr){
 			if(n->father->father == nullptr){
 				if(n->father->left == n){
 					rotRight(n->father);
@@ -149,7 +149,48 @@ public:
 	}
 	
 	void remove(T del){
-		
+		node *aux = root;
+		while(aux->left != nullptr || aux->right != nullptr && aux->value != del){
+			if(del > aux->value && aux->right != nullptr)
+				aux = aux->right;
+			else if(del < aux->value && aux->left != nullptr)
+				aux = aux->left;
+		}
+		if(aux->value != del) splay(aux);
+		else{
+			if(!aux->left && !aux->right){
+				if(aux->father->left == aux) aux->father->left = nullptr;
+				else aux->father->right = nullptr;
+			}
+			else if(aux->left){
+				aux->left->father = aux->father;
+				if(aux->father->left == aux) aux->father->left = aux->left;
+				else aux->father->right = aux->left;
+			}
+			else {
+				node *newNode = aux->right;
+				while(newNode->left) newNode = newNode->left;
+				
+				if(newNode->father->left == newNode) 
+					newNode->father->left = newNode->right;
+				else 
+					newNode->father->right = newNode->right;
+				if(newNode->right) 
+					newNode->right->father = newNode->father;
+				newNode->father = aux->father;
+				newNode->left = aux->left;
+				newNode->right = aux->right;
+				if(aux != root){
+					if(aux->father->left == aux) 
+						aux->father->left = newNode;
+					else 
+						aux->father->right = newNode;
+				}
+			}
+			splay(aux->father);
+			delete aux;
+		}
+
 	}
 
 	Splaytree(){

@@ -1,12 +1,29 @@
 #include <iostream>
+#include <fstream>
+#include <vector>
+#include <random>
+#include <chrono>
 
 #define usage(name) cout << "Usage: " << name << " (-h -r -c -o) <dataset size> (-h for help)" << endl;
+
+#define nFlag 0x01
+#define aFlag 0x02
+#define iFlag 0x04
+#define fFlag 0x08
+#define dFlag 0x10
+#define rFlag 0x20
+#define cFlag 0x40
+#define oFlag 0x80
 
 
 using namespace std;
 
 void helpText(string name);
-void generateCases(string file, int size, int type);
+void generateCases(string file, int size, uint8_t flags);
+vector<int> generateNumbers(int size, bool type);
+
+const string OPERATIONS[3] = {"i", "f", "d"};
+default_random_engine generator(std::chrono::system_clock::now().time_since_epoch().count());
 
 auto main(int argc, char **argv) -> int
 {
@@ -14,45 +31,109 @@ auto main(int argc, char **argv) -> int
 		usage(argv[0]);
 		return 1;
 	}
+
 	uint8_t flags = 0;
-	switch(argv[1][1]){
+	string out = "out.txt";
+
+	for(int i = 1; i < argc - 1; i++){
+		switch(argv[i][1]){
 		case 'h':
 			helpText(argv[0]);
+			return 0;
 			break;
 		case 'n':
-			generateCases("out.txt", atoi(argv[2]), flags);
+			flags |= nFlag;
 			break;
 		case 'a':
-			generateCases("out.txt", atoi(argv[2]), flags);
+			flags |= aFlag;
 			break;
 		case 'i':
-			generateCases("out.txt", atoi(argv[2]), flags);
+			flags |= iFlag;
 			break;
 		case 'f':
-			generateCases("out.txt", atoi(argv[2]), flags);
+			flags |= fFlag;
 			break;
 		case 'd':
-			generateCases("out.txt", atoi(argv[2]), flags);
+			flags |= dFlag;
 			break;
 		case 'r':
-			generateCases("out.txt", atoi(argv[2]), flags);
+			flags |= rFlag;
 			break;
 		case 'c':
-			generateCases("out.txt", atoi(argv[2]), flags);
+			flags |= cFlag;
 			break;
 		case 'o':
-			generateCases(argv[2], atoi(argv[3]), flags);
+			out = argv[i + 1]; i++;
 			break;
 		default:
 			usage(argv[0]);
 			break;
+		}
 	}
-
+	int size = atoi(argv[argc - 1]);
+	if(size <= 0){
+		usage(argv[0]);
+		cout << "Invalid size" << endl;
+		return 1;
+	}
+	generateCases(out, size, flags);
 	return 0;
 }
 
 void generateCases(string file, int size, uint8_t flags){
-	
+	vector<int> numbers;
+	numbers = generateNumbers(size, flags & cFlag);
+	ofstream out(file);
+	if(flags & nFlag){
+		for(int i = 0; i < size; i++){
+			out << numbers[i] << endl;
+		}
+	}
+	else if(flags & aFlag){
+		for(int i = 0; i < size; i++){
+			out << OPERATIONS[generator()%3] << " " << numbers[i] << endl; 
+		}
+	}
+	else if(flags & iFlag){
+		for(int i = 0; i < size; i++){
+			out << OPERATIONS[0] << " " << numbers[i] << endl;
+		}
+	}
+	else if(flags & fFlag){
+		for(int i = 0; i < size; i++){
+			out << OPERATIONS[1] << " " << numbers[i] << endl;
+		}
+	}
+	else if(flags & dFlag){
+		for(int i = 0; i < size; i++){
+			out << OPERATIONS[2] << " " << numbers[i] << endl;
+		}
+	}
+	else{
+		for(int i = 0; i < size; i++){
+			out << OPERATIONS[generator()%3] << " " <<numbers[i] << endl; 
+		}
+	}
+}
+
+vector<int> generateNumbers(int size, bool type){
+	vector<int> numbers;
+	if(type){
+		// Small deviation
+		cout << "Generating numbers with small deviation" << endl;
+		normal_distribution<float> distribution(0.0, 1000.0);
+		for(int i = 0; i < size; i++){
+			numbers.push_back(distribution(generator));
+		}
+	}
+	else{
+		// Random numbers
+		cout << "Generating random numbers" << endl;
+		for(int i = 0; i < size; i++){
+			numbers.push_back(generator());
+		}
+	}
+	return numbers;
 }
 
 void helpText(string name){

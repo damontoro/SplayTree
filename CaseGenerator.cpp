@@ -121,7 +121,7 @@ vector<int> generateNumbers(int size, bool type){
 	if(type){
 		// Small deviation
 		cout << "Generating numbers with small deviation" << endl;
-		normal_distribution<float> distribution(0.0, 1000.0);
+		uniform_int_distribution<int> distribution(0, 1000);
 		for(int i = 0; i < size; i++){
 			numbers.push_back(distribution(generator));
 		}

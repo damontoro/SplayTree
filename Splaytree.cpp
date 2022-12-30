@@ -17,37 +17,39 @@ private:
 	node *root = nullptr;
 
 	void rotRight(node* n){
-		node* temp = n->left;
-		n->left = temp->right;
-		temp->right = n;
-		temp->father = n->father;
-		n->father = temp;
-		if(n->left != nullptr)
-			n->left->father = n;
-
-		if(temp->father != nullptr){
-			if(temp->father->left == n)
-				temp->father->left = temp;
-			else
-				temp->father->right = temp;
+		node *y = n->left;
+		n->left = y->right;
+		if (y->right != nullptr) {
+			y->right->father = n;
 		}
+		y->father = n->father;
+		if (n->father == nullptr) {
+			this->root = y;
+		} else if (n == n->father->right) {
+			n->father->right = y;
+		} else {
+			n->father->left = y;
+		}
+		y->right = n;
+		n->father = y;
 	}
 
 	void rotLeft(node* n){
-		node* temp = n->right;
-		n->right = temp->left;
-		temp->left = n;
-		temp->father = n->father;
-		n->father = temp;
-		if(n->right != nullptr)
-			n->right->father = n;
-			
-		if(temp->father != nullptr){
-			if(temp->father->left == n)
-				temp->father->left = temp;
-			else
-				temp->father->right = temp;
+		node *y = n->right;
+		n->right = y->left;
+		if (y->left != nullptr) {
+			y->left->father = n;
 		}
+		y->father = n->father;
+		if (n->father == nullptr) {
+			this->root = y;
+		} else if (n == n->father->left) {
+			n->father->left = y;
+		} else {
+			n->father->right = y;
+		}
+		y->left = n;
+		n->father = y;
 	}
 
 	void splay(node* n){
@@ -80,37 +82,12 @@ private:
 		}
 		if(n) root = n;
 	}
-
-	void join(node *n){ //This joins the tree N to this tree
-		if(n == nullptr) return;
-		if(this.root == nullptr){
-			this.root = n; return;
-		}
-		node *aux = this.root;
-		while(aux->right != nullptr) aux = aux->right;
-		splay(aux);
-		aux->right = n;
-		n->father = aux;
-	}
-
-	node *split(node *n){ //This splits the tree given a node
-		splay(n);
-		node *small = n;
-		this.root = n->right;
-		if(this.root)
-			this.root->father = nullptr;
-
-		small->right = nullptr;
-		small->father = nullptr;
-		n = nullptr;
-		return small;
-	}
 	
-
 public:
 
 	node *find(T elem){
 		node *aux = root;
+		if(!aux) return nullptr;
 		while(aux->left != nullptr || aux->right != nullptr){
 			if(elem > aux->value && aux->right != nullptr)
 				aux = aux->right;
@@ -133,7 +110,7 @@ public:
 		while(aux->left != nullptr || aux->right != nullptr){
 			if(aux->value <= ins && aux->right != nullptr)
 				aux = aux->right;
-			else if(aux->left != nullptr)
+			else if(aux->value > ins && aux->left != nullptr)
 				aux = aux->left;
 			else
 				break;
@@ -147,11 +124,20 @@ public:
 	
 	void remove(T del){
 		node *aux = root;
+		if(!aux) return;
 		while((aux->left != nullptr || aux->right != nullptr) && aux->value != del){
-			if(del > aux->value && aux->right != nullptr)
-				aux = aux->right;
-			else if(del < aux->value && aux->left != nullptr)
-				aux = aux->left;
+			if(del > aux->value){
+				if(aux->right != nullptr)
+					aux = aux->right;
+				else
+					break;
+			}
+			else if(del < aux->value){
+				if(aux->left != nullptr)
+					aux = aux->left;
+				else
+					break;
+			}
 		}
 		if(aux->value != del) splay(aux);
 		else{
@@ -195,5 +181,6 @@ public:
 	Splaytree(){
 		root = nullptr;
 	}
-	~Splaytree(){}
+	~Splaytree(){
+	}
 };

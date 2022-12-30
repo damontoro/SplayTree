@@ -4,7 +4,7 @@
 #include <random>
 #include <chrono>
 
-#define usage(name) cout << "Usage: " << name << " (-h -r -c -o) <dataset size> (-h for help)" << endl;
+#define usage(name) cout << "Usage: " << name << " (-h -r -c -n -a -i -d -f -o) <dataset size> (-h for help)" << endl;
 
 #define nFlag 0x01
 #define aFlag 0x02
@@ -120,8 +120,9 @@ vector<int> generateNumbers(int size, bool type){
 	vector<int> numbers;
 	if(type){
 		// Small deviation
-		cout << "Generating numbers with small deviation" << endl;
-		uniform_int_distribution<int> distribution(0, 1000);
+		cout << "Generating numbers in a normal distribution" << endl;
+		cout << "Mean: 0, Deviation: 10" << endl;
+		normal_distribution<float> distribution(0, 10);
 		for(int i = 0; i < size; i++){
 			numbers.push_back(distribution(generator));
 		}

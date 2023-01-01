@@ -122,7 +122,7 @@ vector<int> generateNumbers(int size, bool type){
 		// Small deviation
 		cout << "Generating numbers in a normal distribution" << endl;
 		cout << "Mean: 0, Deviation: 10" << endl;
-		normal_distribution<float> distribution(0, 10);
+		normal_distribution<float> distribution(0, 100);
 		for(int i = 0; i < size; i++){
 			numbers.push_back(distribution(generator));
 		}

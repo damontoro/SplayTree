@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <chrono>
+
 #include "Splaytree.cpp"
 
 using namespace std;
@@ -92,9 +93,12 @@ int main(int argc, char *argv[]){
 		}
 		else{
 			waitpid(-1, NULL, 0);
-			test(file, flags);
 		}
 	}
+	cout << "Finished creating cases" << endl;
+	test(file, flags);
+	
+
 
 	return 0;
 	
@@ -105,8 +109,6 @@ void test(string file, uint8_t flags){
 	Splaytree<int> tree;
 	chrono::microseconds time(0);
 	for(int i = 0; i < operations.size(); i++){
-		if(i == 306) 
-			cout << "CUIDADO" << endl;
 		if(operations[i].op == "i"){
 			auto ini = chrono::high_resolution_clock::now();
 			tree.insert(operations[i].value);
@@ -125,11 +127,10 @@ void test(string file, uint8_t flags){
 			auto fin = chrono::high_resolution_clock::now();
 			time +=  chrono::duration_cast<chrono::microseconds>(fin - ini);;
 		}
-		cout << "OP " << i << endl;
 	}
 	cout << "Time(microseconds): " << time.count() << endl;
 	cout << "Operations: " << operations.size() << endl;
-	cout << "Average time: " << time.count()/operations.size() << endl;
+	cout << "Average time: " << float(time.count()/operations.size()) << endl;
 	if(flags & cFlag)
 		cout << "Type: Normal distribution" << endl;
 	else if(flags & rFlag)

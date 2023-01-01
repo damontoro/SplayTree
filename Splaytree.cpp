@@ -122,60 +122,32 @@ public:
 		splay(ne);
 	}
 	
+	//Hacer find del elemento a borrar, buscar el mas grande de la izquierda, hacerle splay y pegarle el arbol derecho
 	void remove(T del){
-		node *aux = root;
+		node *aux = find(del);
 		if(!aux) return;
-		while((aux->left != nullptr || aux->right != nullptr) && aux->value != del){
-			if(del > aux->value){
-				if(aux->right != nullptr)
-					aux = aux->right;
-				else
-					break;
-			}
-			else if(del < aux->value){
-				if(aux->left != nullptr)
-					aux = aux->left;
-				else
-					break;
-			}
+		node *left = aux->left, *right = aux->right;
+		delete(aux);
+		root = nullptr;
+		if(!left){
+			this->root = right;
+			right->father = nullptr;
+			return;
 		}
-		if(aux->value != del) splay(aux);
-		else{
-			if(!aux->left && !aux->right){
-				if(aux->father->left == aux) aux->father->left = nullptr;
-				else aux->father->right = nullptr;
-			}
-			else if(aux->left && !aux->right){
-				aux->left->father = aux->father;
-				if(aux->father && aux->father->left == aux) aux->father->left = aux->left;
-				else if(aux->father) aux->father->right = aux->left;
-			}
-			else {
-				//Find the smallest element in the right subtree
-				node *search = aux->right;
-				while(search->left != nullptr) search = search->left;
-
-				if(search->father->left == search) 
-					search->father->left = search->right;
-				else 
-					search->father->right = search->right;
-
-				search->father = aux->father;
-				search->left = aux->left;
-				search->right = aux->right;
-				if(aux->father && aux->father->left == aux) 
-					aux->father->left = search;
-				else if(aux->father)
-					aux->father->right = search;
-				if(aux->left) aux->left->father = search;
-				if(aux->right) aux->right->father = search;
-
-				if(aux == root) root = search;
-			}
-			splay(aux->father);
-			delete aux;
+		if(!right){
+			this->root = left;
+			left->father = nullptr;
+			return;
 		}
-
+		left->father = nullptr;
+		right->father = nullptr;
+		node *aux2 = left;
+		while(aux2->right != nullptr)
+			aux2 = aux2->right;
+		splay(aux2);
+		aux2->right = right;
+		right->father = aux2;
+		this->root = aux2;
 	}
 
 	Splaytree(){
